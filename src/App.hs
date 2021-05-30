@@ -46,6 +46,7 @@ import Control.Concurrent.Async
 import Data.List (sortBy)
 
 import Data.ByteString.Lazy as Lazy hiding (map, foldr1, maximum, minimum)
+import Network.Wai.Middleware.Cors (simpleCors)
 
 -- sort and sum net income for company
 
@@ -66,20 +67,20 @@ itemApi = Proxy
 run :: IO ()
 run = do
   maybePortStr <- lookupEnv "PORT"
-  let port :: Int = read (getOrDefault "3000" maybePortStr) 
+  let port :: Int = read (getOrDefault "3000" maybePortStr)
       settings =
         setPort port $
         setBeforeMainLoop (hPutStrLn stderr ("Listening on port " ++ show port))
         defaultSettings
-  runSettings settings =<< mkApp
+  runSettings settings mkApp
 
-  where 
+  where
     getOrDefault :: p -> Maybe p -> p
     getOrDefault defaultValue (Just x)  = x
     getOrDefault defaultValue _ = defaultValue
 
-mkApp :: IO Application
-mkApp = return $ serve itemApi server
+-- mkApp :: IO Application
+mkApp = simpleCors $ serve itemApi server
 
 server :: Server QueryApi
 server =
@@ -104,7 +105,7 @@ statsHTML payload = do
     Left errorMsg -> throwError err400 {
       errBody = encode errorMsg
     }
-    Right results -> return $ 
+    Right results -> return $
       CompaniesQueryResponse {
         highestGrossProfit = highestGrossProfitStats results,
         sortedByNetIncome  = sortedNetIncomeStats results,
@@ -360,15 +361,15 @@ renderQueryResults (CompaniesQueryResponse profit income revenue) = html_ $ do
     link_ [rel_ "stylesheet", type_ "text/css", href_ "/styles.css"]
   body_ $ do
     h1_ "Gathered Statistics"
-    table_ $ do 
+    table_ $ do
       tr_  (
         th_ [colspan_ "3"] "Highest Gross Profit"  )
 
-      tr_  (do 
+      tr_  (do
         th_ "who"
         th_ "when"
         th_ "value")
-      
+
       tr_ $ mapM_ (td_ . toHtml) (statsToTr profit)
 
     br_ []
@@ -378,21 +379,21 @@ renderQueryResults (CompaniesQueryResponse profit income revenue) = html_ $ do
     br_ []
     bigTable "Sorted Net Income" mapped2
 
-  where 
+  where
     mapped2 = map statsToTr income
     mapped1 = map statsToTr revenue
 
-    statsToTr stats = 
+    statsToTr stats =
       [(show . who) stats,
       (show . when) stats,
       (show . value) stats]
 
     -- bigTable :: [[String]] -> Html ()
-    bigTable title ts = table_ $ do 
+    bigTable title ts = table_ $ do
       tr_  (
         th_ [colspan_ "3"] title )
 
-      tr_  (do 
+      tr_  (do
         th_ "who"
         th_ "when"
         th_ "value")

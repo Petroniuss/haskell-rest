@@ -24,6 +24,7 @@ dependencies:
 - servant
 - servant-server
 - wai
+- wai-cors
 - warp
 - req
 - text
