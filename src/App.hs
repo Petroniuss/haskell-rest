@@ -89,7 +89,7 @@ appCorsResourcePolicy :: CorsResourcePolicy
 appCorsResourcePolicy =
     simpleCorsResourcePolicy
         { corsMethods = ["OPTIONS", "GET", "PUT", "POST"]
-        , corsRequestHeaders = []
+        , corsRequestHeaders = ["Content-Type"]
         }
 
 server :: Server QueryApi
