@@ -80,17 +80,17 @@ run = do
     getOrDefault defaultValue _ = defaultValue
 
 -- mkApp :: IO Application
-mkApp = allowCors $ serve itemApi server
+mkApp = simpleCors $ serve itemApi server
 
-allowCors :: Middleware
-allowCors = cors (const $ Just appCorsResourcePolicy)
+-- allowCors :: Middleware
+-- allowCors = cors (const $ Just appCorsResourcePolicy)
 
-appCorsResourcePolicy :: CorsResourcePolicy
-appCorsResourcePolicy =
-    simpleCorsResourcePolicy
-        { corsMethods = ["OPTIONS", "GET", "PUT", "POST"]
-        , corsRequestHeaders = ["Content-Type"]
-        }
+-- appCorsResourcePolicy :: CorsResourcePolicy
+-- appCorsResourcePolicy =
+--     simpleCorsResourcePolicy
+--         { corsMethods = ["OPTIONS", "GET", "PUT", "POST"]
+--         , corsRequestHeaders = [content]
+--         }
 
 server :: Server QueryApi
 server =
