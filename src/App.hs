@@ -46,7 +46,7 @@ import Control.Concurrent.Async
 import Data.List (sortBy)
 
 import Data.ByteString.Lazy as Lazy hiding (map, foldr1, maximum, minimum)
-import Network.Wai.Middleware.Cors (simpleCors)
+import Network.Wai.Middleware.Cors
 
 -- sort and sum net income for company
 
@@ -80,7 +80,17 @@ run = do
     getOrDefault defaultValue _ = defaultValue
 
 -- mkApp :: IO Application
-mkApp = simpleCors $ serve itemApi server
+mkApp = allowCors $ serve itemApi server
+
+allowCors :: Middleware
+allowCors = cors (const $ Just appCorsResourcePolicy)
+
+appCorsResourcePolicy :: CorsResourcePolicy
+appCorsResourcePolicy =
+    simpleCorsResourcePolicy
+        { corsMethods = ["OPTIONS", "GET", "PUT", "POST"]
+        , corsRequestHeaders = ["Authorization", "Content-Type"]
+        }
 
 server :: Server QueryApi
 server =

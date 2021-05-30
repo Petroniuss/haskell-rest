@@ -67,7 +67,7 @@
                 'Content-Type': 'application/json',
                 "Accept":"text/html"
             },
-            mode: "no-cors",
+            mode: "cors",
             body: JSON.stringify(payload)
         })
         .then(response => response.text())
