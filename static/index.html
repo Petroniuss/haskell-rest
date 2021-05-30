@@ -1,0 +1,81 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>REST</title>
+</head>
+
+<body>
+    <form id="myForm">
+        <h1>Get statistics about huge corporations</h1>
+
+        <fieldset>
+            <label>First company</label>
+            <input type="text" id="companyA" name="companyA" value=""/>
+
+            <br>
+            <br>
+
+            <label>Second company</label>
+            <input type="text" id="companyB" name="companyB" value="" />
+
+            <br>
+            <br>
+
+            <label>Third company</label>
+            <input type="text" id="companyC" name="companyC" value="" />
+        </fieldset>
+
+        <br>
+        <br>
+        <input type="submit" value="Submit"></input>
+    </form>
+
+    <br>
+    <br>
+
+    <code id="placeholder" style="white-space: pre-wrap;">
+
+    </code>
+    <script>
+    var companyA = document.getElementById("companyA");
+    var companyB = document.getElementById("companyB");
+    var companyC = document.getElementById("companyC");
+    var placeholder = document.getElementById("placeholder");
+    var form = document.getElementById("myForm");
+
+    form.addEventListener("submit", function(evt) {
+        evt.preventDefault();
+        submit();
+    });
+
+    function submit() {
+        const values = [companyA.value, companyB.value, companyC.value]
+               .map(x => x.trim())
+               .filter(x => x && x !== "");
+
+        const payload = {
+            "companiesSymbols": values
+        }
+
+        console.log(payload);
+
+        fetch("http://localhost:3000/stats", {
+            method: "POST", 
+            headers: {
+                'Content-Type': 'application/json',
+                "Accept":"text/html"
+            },
+            mode: "same-origin",
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.body.innerHTML = html;
+        })
+    }
+    </script>
+</body>
+</html>
+

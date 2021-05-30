@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:3000
+@apiUrl = https://www.alphavantage.co
+
+GET {{apiUrl}}/query?function=INCOME_STATEMENT&symbol=IBM&apikey=P29GLD76NJYI7ELX
+
+###
+
+GET {{baseUrl}}/query?company=IBM
+
+###
+
+POST {{baseUrl}}/query
+Content-Type: application/json
+
+{
+    "companiesSymbols" : [
+        "IBM",
+        "MSFT",
+        "GOOGL",
+        "AMZN"
+    ]
+}
